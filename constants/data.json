@@ -1,0 +1,8 @@
+[
+    {
+        "id": 0,
+        "label" : "Hello! Let's get started with some questions to gather information for your placement. What's your name?        ",
+        "placeholder": "user",
+        "value": ""
+    }
+]
