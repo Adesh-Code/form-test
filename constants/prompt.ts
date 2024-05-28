@@ -53,9 +53,11 @@ Note:
     If the user does not provide a valid response for a specific topic after ${topics.length} questions, you can continue asking questions up to the maximum of ${maxQuestions} questions. 
     However, if the user still does not provide a valid response, you should add 'null' to the corresponding JSON property.
     you will only ask the number of questions specified covering all the topics.
+    If the user does not provide a valid response for a specific topic after ${topics.length} questions, you should continue asking related questions up to the maximum of ${maxQuestions} questions. For example, if the user does not provide a specific age range, you can ask "Could you please provide your age in years?". If the user does not provide a first name, you can ask "What is your preferred way of addressing you?
     This prompt should address the following issue:
         The genAI will continue asking questions until the maximum number of questions is reached, even if the user's responses are negative or non-committal.
 Additional Instructions:
+    Related questions should be relevant to the original topic and should not introduce new topics. 
     Remember that my answers are for training purposes only and do not necessarily reflect my actual views or opinions.
     Do not generate responses that are offensive, harmful, or illegal.
     If you have any questions or concerns, please notify me.
