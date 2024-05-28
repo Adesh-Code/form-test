@@ -3,9 +3,10 @@ import { Entities, FormData, RequestData, ServerFormData } from '@/types';
 import Button from '@component-cloud-v1/button';
 import Input from '@component-cloud-v1/input';
 import axios from 'axios';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import jsonFormData from './../../constants/data.json';
 import { ThreeDots } from 'react-loader-spinner';
+import * as prompts from './../../constants/prompt';
 
 export interface FormProps { minQuestions: number, maxQuestions: number, prompt: string, keyTopics: string[] }
 
@@ -18,6 +19,41 @@ const Form = ({ minQuestions, maxQuestions, prompt, keyTopics }: FormProps) => {
 
     const changePage = () => {
         setCurrentPage(currentPage + 1);
+    }
+
+    const getFirstQuestion = async () => {
+        setLoader(true);
+        const content: RequestData = {
+            contents: [
+                {
+                    role: Entities.user,
+                    parts: [
+                        {
+                            text: prompts.main_prompt
+                        }
+                    ]
+                },
+                {
+                    role: Entities.user,
+                    parts: [
+                        {
+                            text: `${prompts.adminToAIPrefix} ${prompt}`
+                        }
+                    ]
+                },
+                {
+                    role: Entities.user,
+                    parts: [
+                        {
+                            text: prompts.topicPrompt({minQuestions, maxQuestions, topics : keyTopics})
+                        }
+                    ]
+                }
+            ],
+        };
+        const data = await axios.post('http://localhost:3000/v1', content);
+        setLoader(false);
+
     }
 
     const handleClick = async () => {
@@ -61,8 +97,12 @@ const Form = ({ minQuestions, maxQuestions, prompt, keyTopics }: FormProps) => {
 
         }
         setLoader(false);
-
     }
+
+    useEffect(() => {
+        getFirstQuestion();
+    }, []);
+
     if (formData.length - 1 === maxQuestions) {
         return (
             <div>
