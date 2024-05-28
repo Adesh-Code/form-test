@@ -67,8 +67,3 @@ End Conversation:
     Once you have asked a minimum of ${topics.length} questions or reached the maximum of ${maxQuestions} questions, please return the JSON response in the specified format.
 `
 
-export const adminToAIPrefix = 'The Admin prompt to the counsellor AI :- '
-
-export const topicPrompt = ({minQuestions, maxQuestions, topics} : {minQuestions: number, maxQuestions: number, topics: string[]}) => `${adminToAIPrefix} Let's keep the conversation to ${minQuestions} questions which will give us the information of the enduser as ${topics.map((topic, index) => `${index}. ${topic}`)}, do not add another topics keep your info to this topics only. If the ${minQuestions} questions do not suffice for the amount of data we need you can elongate the conversation upto ${maxQuestions} questions.`
-
-export const startPrompt = `Let's role play where I am the end user answering your questions and you are the counsellor abiding by above rules`
