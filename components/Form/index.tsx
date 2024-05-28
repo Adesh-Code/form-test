@@ -5,7 +5,7 @@ import Input from '@component-cloud-v1/input';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { ThreeDots } from 'react-loader-spinner';
-import * as prompts from './../../constants/prompt';
+import * as prompts from '../../constants/prompt';
 
 export interface FormProps { maxQuestions: number, context: string, keyTopics: string[] }
 
