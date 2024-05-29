@@ -17,15 +17,16 @@ When you have completed the questionaire return the response in following format
     JSON = {Enter JSON HERE}
 `
 
-export const secondary_prompt =({maxQuestions, topics, context} : {maxQuestions: number, topics: string[], context: string}) => `
+export const secondary_prompt = ({ maxQuestions, topics, context }: { maxQuestions: number, topics: string[], context: string }) => `
 I am training you to engage in conversations with me. To achieve this, you will ask me questions and I will provide answers.
 Context: 
     ${context}.
 Please follow these rules: 
     Ask minimum of ${topics.length} specific and open-ended questions to retrieve the following information from the user:
-        ${topics.map((topic, index) => `${index ==0 ? '' : '\n\t\t'}${index+1}. ${topic} `)}
+        ${topics.map((topic, index) => `${index == 0 ? '' : '\t\t'}${index + 1}. ${topic} `)}
     If the user's responses are not sufficient to extract the necessary information, continue asking questions up to a maximum of ${maxQuestions} questions, even if the user's responses are negative or incomplete.
     Each new question should be generated based on the last question and its response.
+    All the questions will be generated in provided Question format.
     At the end of the conversation, return a JSON response
     If there is no valid response for a specific topic, even after asking the maximum number of questions, add 'null' to the corresponding JSON property.
     Encourage me to elaborate on my answers.
@@ -35,21 +36,76 @@ Please follow these rules:
     Respect my privacy and do not ask personal questions.
     Stay on topic and avoid irrelevant tangents.
     Use clear and unambiguous language.
-Question Format:"Question: {ENTER QUESTION}?"
-Response Format:"Questions complete, here is your JSON: \n JSON: {ENTER JSON HERE}"
-Example Questions: 
-    Question: How old are you?
-    Question: Can you provide a range for your annual income?
-    Question: What is your first name?
-    Question: What is your last name?
-    Question: Can you give me a more specific age range?
-    Question: Can you tell me a bit more about your financial situation?
+
+Question Format:
+    Each question should be represented as an object with the following properties:
+        {
+            label: string;  // contains question
+            placeholder?: string; // optional, but required for text inputs
+            type: InputType;
+            min?: number;  // for number inputs
+            max?: number;  // for number inputs
+            options?: Option[];  // for radio or checkbox inputs
+        }
+    The 'type' property can take one of the following values: 
+        'text', 'email', 'number', 'date', 'checkbox', or 'radio'.
+    The 'options' property is only required for radio and checkbox inputs.
+Example Questions:  
+    Question:
+        {
+            label: What is your age?",
+            type: InputType.NUMBER,
+            min: 0,
+            max: 120
+        }
+    Question:
+        {
+            label: "What is your annual income?",
+            type: InputType.NUMBER,
+            placeholder: "Enter a range, e.g. 50000-100000"
+        }
+    Question:
+        {
+            label: "What is your first name?",
+            type: InputType.TEXT
+        }
     ... (up to a maximum of ${maxQuestions} questions)
-JSON Response: 
+
+Response Format: "Questions complete, here is your JSON:" 
     {
-        ${topics.map((topic, index) => `${index ==0 ? '' : '\n\t\t'}${topic} : null`)}
+        "questions": [// array of question objects],
+        "answers": {
+            ${topics.map((topic, index) => `${index ==0 ? '' : '\n\t\t'}${topic} : null`)}
+        } 
     }
+Example JSON Response:
+    {
+        "questions": [
+            {
+                label: "What is your age?",
+                type: InputType.NUMBER,
+                min: 0,
+                max: 120 
+            },
+            {
+                label: "What is your annual income?",
+                type: InputType.NUMBER,
+                placeholder: "Enter a range, e.g. 50000-100000"
+            },
+            {
+                label: "What is your first name?",
+                type: InputType.TEXT
+            }
+        ],
+        "answers": {
+            "age": 30,
+            "wealth": "Upper middle class",
+            "name": "John Doe"
+        }
+    }
+
 Note:
+    By adding a 'placeholder' property to the question objects, you can specify the desired placeholder text for text inputs.
     If the user does not provide a valid response for a specific topic after ${topics.length} questions, you can continue asking questions up to the maximum of ${maxQuestions} questions. 
     However, if the user still does not provide a valid response, you should add 'null' to the corresponding JSON property.
     you will only ask the number of questions specified covering all the topics.
@@ -57,7 +113,8 @@ Note:
     This prompt should address the following issue:
         The genAI will continue asking questions until the maximum number of questions is reached, even if the user's responses are negative or non-committal.
 Additional Instructions:
-    Related questions should be relevant to the original topic and should not introduce new topics. 
+    Only reply one question at a time.
+    Related questions should be relevant to the original context and should not introduce new context. 
     Remember that my answers are for training purposes only and do not necessarily reflect my actual views or opinions.
     Do not generate responses that are offensive, harmful, or illegal.
     If you have any questions or concerns, please notify me.
@@ -67,3 +124,79 @@ End Conversation:
     Once you have asked a minimum of ${topics.length} questions or reached the maximum of ${maxQuestions} questions, please return the JSON response in the specified format.
 `
 
+export const jsa = `
+[    
+    {
+        "label": "What is your age?",
+        "placeholder": "Enter your age",
+        "type": "radio",
+        "options": [
+            "Under 18",
+            "18-24",
+            "25-34",
+            "35-44",
+            "45-54",
+            "55-64",
+            "65 or older"
+        ]
+    },
+    {
+        "label": "What is your annual income?",
+        "placeholder": "Enter your annual income",
+        "type": "multiline"
+    },
+    {
+        "label": "What is your first name?",
+        "placeholder": "Enter your first name",
+        "type": "text"
+    },
+    {
+        "label": "What is your last name?",
+        "placeholder": "Enter your last name",
+        "type": "text"
+    },
+    {
+        "label": "What is your date of birth?",
+        "placeholder": "Select your date of birth",
+        "type": "date"
+    }
+]
+`
+
+export const jsa2 = `
+{
+    "questions": [
+        {
+            "label": "Age",
+            "placeholder": "Enter your age",
+            "type": "number",
+            "min": 1,
+            "max": 120
+        },
+        {
+            "label": "Wealth",
+            "placeholder": "Select your wealth range",
+            "type": "radio",
+            "options": [
+                {
+                    "value": "low",
+                    "label": "Low"
+                },
+                {
+                    "value": "middle",
+                    "label": "Middle"
+                },
+                {
+                    "value": "high",
+                    "label": "High"
+                }
+            ]
+        },
+        {
+            "label": "Name",
+            "placeholder": "Enter your full name",
+            "type": "text"
+        }
+    ]
+}
+`
