@@ -69,7 +69,8 @@ const Form = ({maxQuestions, context, keyTopics }: FormProps) => {
             const returnedData: ServerFormData = data.data;
 
             if (returnedData.candidates[0].content.parts[0].text.toString().includes('Questions complete, here is your JSON:')){
-                setResult(returnedData.candidates[0].content.parts[0].text);
+                console.log(returnedData.candidates[0].content.parts[0].text.toString());
+                setResult(returnedData.candidates[0].content.parts[0].text.toString().split('JSON:')[1]);
         setLoader(false);
 
         return;
@@ -117,7 +118,6 @@ const Form = ({maxQuestions, context, keyTopics }: FormProps) => {
         }
 
         getFirstQuestion();
-        console.log('done')
        
     }, [context, keyTopics, maxQuestions]);
 
