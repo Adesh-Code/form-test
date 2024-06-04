@@ -3,7 +3,9 @@ export interface RequestData {
     contents: RoleData[]
 }
 
-export enum Entities { user = 'user', model = 'model' }
+export enum Entities { user = 'user', model = 'model' };
+
+export enum InputType { text = 'text', email = 'email', number = 'number', date = 'date', checkbox = 'checkbox', radio = 'radio'};
 
 export interface RoleData {
     role: Entities,
@@ -11,14 +13,18 @@ export interface RoleData {
 }
 
 export interface TextData {
-    text: string
+    text: string;
 }
 
-export interface FormData {
+export interface FormQuestionData {
     id: number,
     label: string,
-    placeholder: string,
+    placeholder?: string,
     value: string,
+    type?: InputType;
+    min?: number;  
+    max?: number;  
+    options?: string[]; 
 }
 
 export interface ServerFormData {

@@ -54,20 +54,20 @@ Example Questions:
     Question:
         {
             label: What is your age?",
-            type: InputType.NUMBER,
+            type: 'number',
             min: 0,
             max: 120
         }
     Question:
         {
             label: "What is your annual income?",
-            type: InputType.NUMBER,
+            type: 'number',
             placeholder: "Enter a range, e.g. 50000-100000"
         }
     Question:
         {
             label: "What is your first name?",
-            type: InputType.TEXT
+            type: 'text'
         }
     ... (up to a maximum of ${maxQuestions} questions)
 
@@ -83,18 +83,18 @@ Example JSON Response:
         "questions": [
             {
                 label: "What is your age?",
-                type: InputType.NUMBER,
+                type: 'number',
                 min: 0,
                 max: 120 
             },
             {
                 label: "What is your annual income?",
-                type: InputType.NUMBER,
+                type: 'number',
                 placeholder: "Enter a range, e.g. 50000-100000"
             },
             {
                 label: "What is your first name?",
-                type: InputType.TEXT
+                type: 'text'
             }
         ],
         "answers": {
