@@ -1,13 +1,22 @@
 
-export interface RequestData {
-    contents: RoleData[]
-}
-
-export enum Entities { user = 'user', model = 'model' };
+export enum Entities { user = 'user', model = 'model', assistant = 'assistant', system = 'system' };
 
 export enum InputType { text = 'text', email = 'email', number = 'number', date = 'date', checkbox = 'checkbox', radio = 'radio'};
 
-export interface RoleData {
+export interface OpenAIRequestData {
+    messages : OpenAIRoleData[]
+}
+
+export interface OpenAIRoleData {
+    role: Entities,
+    content: string
+}
+
+export interface GeminiRequestData {
+    contents: GeminiRoleData[]
+}
+
+export interface GeminiRoleData {
     role: Entities,
     parts: TextData[]
 }
@@ -25,16 +34,4 @@ export interface FormQuestionData {
     min?: number;  
     max?: number;  
     options?: string[]; 
-}
-
-export interface ServerFormData {
-    candidates: ServerContentData[],
-    usageMetadata: any
-}
-
-export interface ServerContentData {
-    content: RoleData,
-    finishReason: string,
-	index: number,
-    safetyRatings: any
 }
