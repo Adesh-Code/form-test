@@ -12,6 +12,18 @@ export interface OpenAIRoleData {
     content: string
 }
 
+export interface GeminiServerFormData {
+    candidates: GeminiServerData[],
+    usageMetadata: any
+}
+
+export interface GeminiServerData {
+    content: GeminiRoleData,
+    finishReason: string,
+	index: number,
+    safetyRatings: any
+}
+
 export interface GeminiRequestData {
     contents: GeminiRoleData[]
 }

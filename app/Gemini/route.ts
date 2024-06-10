@@ -1,15 +1,15 @@
-import { RequestData, ServerFormData } from "@/types";
+import { GeminiRequestData, GeminiServerFormData } from "@/types";
 import axios from "axios";
-import {AI_API} from './../../api';
+import {AI_API} from '../../api';
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
     try {
     const url = AI_API;
-    const data : RequestData = await request.json();
+    const data : GeminiRequestData = await request.json();
     
     const responseData = await axios.post(url, data);
-    const serverData = responseData.data as ServerFormData;
+    const serverData = responseData.data as GeminiServerFormData;
 
     let questionData = serverData.candidates[0].content.parts[0].text;
 

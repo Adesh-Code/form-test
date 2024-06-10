@@ -1,5 +1,5 @@
 'use client'
-import { Entities, FormQuestionData, InputType, RequestData, RoleData, ServerFormData } from '@/types';
+import { Entities, FormQuestionData, InputType, GeminiRequestData, GeminiRoleData } from '@/types';
 import Button from '@component-cloud-v1/button';
 import Input from '@component-cloud-v1/input';
 import axios from 'axios';
@@ -9,6 +9,8 @@ import * as prompts from '../../constants/prompt';
 
 export interface FormProps { maxQuestions: number, context: string, keyTopics: string[] }
 
+let throatle = 2;
+
 const Form = ({ maxQuestions, context, keyTopics }: FormProps) => {
     if (maxQuestions < keyTopics.length) {
         throw Error('Maximum questions should be greather than total topics');
@@ -17,7 +19,6 @@ const Form = ({ maxQuestions, context, keyTopics }: FormProps) => {
     const [currentPage, setCurrentPage] = useState<number>(0);
     const [loader, setLoader] = useState<boolean>(false);
     const [result, setResult] = useState<string | null>(null);
-    const [throatle, setThroatle] = useState(2);
 
     const changePage = () => {
         setCurrentPage(currentPage + 1);
@@ -42,12 +43,10 @@ const Form = ({ maxQuestions, context, keyTopics }: FormProps) => {
     }
 
     const handleClick = async () => {
-        
-
         if (formData.length < maxQuestions && loader === false) {
 
             const currentIndex= formData.findIndex((data) => data.id === currentPage);
-            const prevFormInfo: RoleData[] = [];
+            const prevFormInfo: GeminiRoleData[] = [];
 
             formData.map((formVal) => {
                 prevFormInfo.push({
@@ -68,7 +67,7 @@ const Form = ({ maxQuestions, context, keyTopics }: FormProps) => {
                 });
             });
 
-            const content: RequestData = {
+            const content: GeminiRequestData = {
                 contents: [
                     {
                         role: Entities.user,
@@ -89,17 +88,18 @@ const Form = ({ maxQuestions, context, keyTopics }: FormProps) => {
     }
 
     const handleApi = async (content: any, id: number) => {
+        console.log(throatle);
         if (throatle === 0) {
             console.log("Exceeded maximum question requests, please do again in some time");
-            setThroatle(2);
+            throatle = 2;
             setLoader(false);
             return;
         }
-        setThroatle(throatle - 1);
+        throatle = throatle - 1;
         setLoader(true);
         console.log('handle apiasad \n');
 
-        const data = await axios.post('http://localhost:3000/v1', content);
+        const data = await axios.post('http://localhost:3000/Gemini', content);
 
         if (data.status === 204) {
             console.log("Incorrect data format got")
@@ -128,14 +128,14 @@ const Form = ({ maxQuestions, context, keyTopics }: FormProps) => {
         };
 
 
-        setThroatle(2);
+        throatle = 2;
         setFormData([...formData, newQuestion]);
         setLoader(false);
     }
 
     useEffect(() => {
         const getFirstQuestion = async () => {
-            const content: RequestData = {
+            const content: GeminiRequestData = {
                 contents: [
                     {
                         role: Entities.user,
@@ -156,10 +156,20 @@ const Form = ({ maxQuestions, context, keyTopics }: FormProps) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [context, keyTopics, maxQuestions]);
 
+
+
     if (result) {
         return (
             <div>
                 <h1>Thanks for the form here, is the result == {JSON.stringify(result, null, ' ')}</h1>
+            </div>
+        )
+    }
+
+    if (throatle) {
+        return (
+            <div>
+                Something went wrong...
             </div>
         )
     }
